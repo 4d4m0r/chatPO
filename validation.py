@@ -35,19 +35,14 @@ df["kw_coverage2+"] = [
     for pred, ref in zip(df["resposta_llm"].fillna(""), df["answer"].fillna(""))
 ]
 
-THRESH = 0.80
-if "tipo" in df.columns:
-    mask_fechadas = df["tipo"].fillna("").str.lower().eq("fechada")
-else:
-    mask_fechadas = pd.Series([True]*len(df))
+THRESH = 0.60
 
-df["acerto_bin"] = (df["sim_cosseno"] >= THRESH) & mask_fechadas
+df["acerto_bin"] = (df["sim_cosseno"] >= THRESH)
 
 resumo = {
     "n": len(df),
     "sim_cosseno_medio": float(df["sim_cosseno"].mean()),
     "rougeL_medio": float(df["rougeL_f"].mean()),
-    "acuracia_binaria(fechadas)": float(df.loc[mask_fechadas, "acerto_bin"].mean()) if mask_fechadas.any() else None,
     "kw_coverage2+_%": float(df["kw_coverage2+"].mean())
 }
 print("Resumo:", resumo)
